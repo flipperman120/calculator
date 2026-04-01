@@ -1,24 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>System Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lock Panel</title>
     <style>
-        body { background: #1a1a1a; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
-        button { padding: 20px; font-size: 20px; cursor: pointer; margin: 10px; border-radius: 10px; border: none; }
-        .lock { background: #ff4444; color: white; }
-        .unlock { background: #44ff44; color: black; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .lock-panel {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .lock-icon {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .lock-panel h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .lock-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .lock-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .lock-btn:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
-    <h1>Site Control Panel</h1>
-    <button class="lock" onclick="setLock(true)">LOCK SITE (Calculator Only)</button>
-    <button class="unlock" onclick="setLock(false)">UNLOCK SITE (Enable Secret)</button>
-
+    <div class="lock-panel">
+        <div class="lock-icon">🔒</div>
+        <h2>Locked</h2>
+        
+        <form id="lockForm">
+            <div class="form-group">
+                <label for="password">Enter Code:</label>
+                <input type="password" id="password" name="password" placeholder="Enter the code" required>
+            </div>
+            
+            <button type="submit" class="lock-btn">Unlock</button>
+        </form>
+    </div>
+    
     <script>
-        function setLock(status) {
-            localStorage.setItem('calculatorLocked', status);
-            alert("Site is now " + (status ? "LOCKED" : "UNLOCKED"));
-        }
+        document.getElementById('lockForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            
+            // Correct code is 3421
+            const correctPassword = '3421';
+            
+            if (password === correctPassword) {
+                alert('Unlocked!');
+                // Redirect or perform action
+                // window.location.href = 'dashboard.html';
+            } else {
+                alert('Incorrect code!');
+                document.getElementById('password').value = '';
+            }
+        });
     </script>
 </body>
 </html>
