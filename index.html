@@ -8,12 +8,12 @@
         /* --- TI-30XIIS STEALTH STYLE --- */
         :root {
             --bg-color: #f4f4f9;
-            --calc-body: #1e2124; /* Dark plastic */
-            --screen-bg: #c5d1c5; /* LCD green-grey */
-            --btn-blue: #5d7fa3;  /* 2nd and Enter keys */
-            --btn-black: #2a2a2a; /* Numbers */
-            --btn-nav: #444;      /* Arrow keys */
-            --btn-op: #3d4e5f;    /* Operators */
+            --calc-body: #1e2124; 
+            --screen-bg: #c5d1c5; 
+            --btn-blue: #5d7fa3;  
+            --btn-black: #2a2a2a; 
+            --btn-nav: #444;      
+            --btn-op: #3d4e5f;    
         }
 
         body {
@@ -32,7 +32,6 @@
             height: 100vh;
         }
 
-        /* Tapered Body Shape */
         .calculator {
             background-color: var(--calc-body);
             padding: 25px 20px 45px 20px;
@@ -92,7 +91,6 @@
             box-shadow: 0px 1px 0px #000;
         }
 
-        /* Specific Key Styling */
         .blue-btn { background-color: var(--btn-blue) !important; }
         .nav-btn { background-color: var(--btn-nav) !important; border-radius: 50% !important; font-size: 1rem !important; }
         .op-btn { background-color: var(--btn-op) !important; }
@@ -182,40 +180,40 @@
         <input type="text" id="display" placeholder="0" readonly>
         
         <div class="buttons">
-            <button class="calc-btn blue-btn" onclick="toggleSecret()">2nd</button>
+            <button class="calc-btn blue-btn">2nd</button>
             <button class="calc-btn nav-btn">◀</button>
             <button class="calc-btn nav-btn">▲</button>
             <button class="calc-btn nav-btn">▼</button>
             <button class="calc-btn nav-btn">▶</button>
 
-            <button class="calc-btn op-btn">log</button>
-            <button class="calc-btn op-btn">sin</button>
-            <button class="calc-btn op-btn">cos</button>
-            <button class="calc-btn op-btn">tan</button>
+            <button class="calc-btn op-btn" onclick="mathFunc('log')">log</button>
+            <button class="calc-btn op-btn" onclick="mathFunc('sin')">sin</button>
+            <button class="calc-btn op-btn" onclick="mathFunc('cos')">cos</button>
+            <button class="calc-btn op-btn" onclick="mathFunc('tan')">tan</button>
             <button class="calc-btn clr-btn" onclick="clearDisplay()">CLR</button>
 
             <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
             <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
             <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
             <button class="calc-btn op-btn" onclick="appendToDisplay('/')">÷</button>
-            <button class="calc-btn op-btn" onclick="appendToDisplay('*')">×</button>
+            <button class="calc-btn op-btn" onclick="mathFunc('sq')">x²</button>
 
             <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
             <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
             <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay('*')">×</button>
             <button class="calc-btn op-btn" onclick="appendToDisplay('-')">−</button>
-            <button class="calc-btn op-btn" onclick="appendToDisplay('+')">+</button>
 
             <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
             <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
             <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
             <button class="calc-btn blue-btn" onclick="calculate()" style="grid-row: span 2; height: 100%;">ENTER</button>
-            <button class="calc-btn op-btn" onclick="appendToDisplay('(')">(</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay('+')">+</button>
 
             <button class="calc-btn" onclick="appendToDisplay('0')">0</button>
             <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+            <button class="calc-btn op-btn" onclick="mathFunc('pi')">π</button>
             <button class="calc-btn op-btn" onclick="appendToDisplay('**')">^</button>
-            <button class="calc-btn op-btn" onclick="appendToDisplay(')')">)</button>
         </div>
     </div>
 </div>
@@ -248,35 +246,38 @@ const calcUI = document.getElementById('calc-ui');
 const hub = document.getElementById('hub-container');
 const grid = document.getElementById("grid");
 
-// --- DATA FETCHING ---
 async function fetchGames() {
     try {
         const response = await fetch('games.json');
         const data = await response.json();
         allGames = data;
         resetGrid();
-    } catch (error) {
-        console.error("Error loading games.json:", error);
-    }
+    } catch (error) { console.error(error); }
 }
 
-// --- CALCULATOR LOGIC ---
 function appendToDisplay(v) { display.value += v; }
 function clearDisplay() { display.value = ""; }
+
+function mathFunc(type) {
+    let val = parseFloat(display.value) || 0;
+    if (type === 'sin') display.value = Math.sin(val).toFixed(4);
+    if (type === 'cos') display.value = Math.cos(val).toFixed(4);
+    if (type === 'tan') display.value = Math.tan(val).toFixed(4);
+    if (type === 'log') display.value = Math.log10(val).toFixed(4);
+    if (type === 'sq')  display.value = Math.pow(val, 2);
+    if (type === 'pi')  display.value += Math.PI.toFixed(5);
+}
 
 function calculate() {
     if (display.value === "1234") {
         openHub();
     } else {
         try { 
-            // Standardizing the input for JS eval
-            let result = eval(display.value.replace('÷', '/').replace('×', '*'));
-            display.value = result;
+            display.value = eval(display.value); 
         } catch(e) { display.value = "Error"; }
     }
 }
 
-// PANIC KEY [ESC]
 window.addEventListener('keydown', (e) => {
     if (e.key === "Escape") {
         closeGame();
@@ -287,7 +288,6 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
-// --- HUB LOGIC ---
 function openHub() {
     calcUI.style.display = "none";
     hub.style.display = "block";
@@ -301,7 +301,6 @@ function loadMoreGames() {
         (currentCategory === "All" || g.cat === currentCategory) &&
         g.name.toLowerCase().includes(searchVal)
     );
-    
     const chunk = filtered.slice(currentIndex, currentIndex + 20);
     chunk.forEach(game => {
         const div = document.createElement("div");
@@ -333,10 +332,8 @@ function closeGame() {
 }
 
 window.addEventListener("scroll", () => {
-    if (hub.style.display === "block") {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-            loadMoreGames();
-        }
+    if (hub.style.display === "block" && (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500)) {
+        loadMoreGames();
     }
 });
 </script>
