@@ -152,7 +152,6 @@
             cursor: pointer;
             font-weight: bold;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         .panic-info {
             font-size: 11px;
@@ -172,22 +171,18 @@
             <button class="calc-btn" onclick="clearDisplay()" style="grid-column: span 2; background: #c0392b;">CLEAR</button>
             <button class="calc-btn operator" onclick="appendToDisplay('/')">/</button>
             <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
-            
             <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
             <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
             <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
             <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
-            
             <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
             <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
             <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
             <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
-            
             <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
             <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
             <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
             <button class="calc-btn operator" onclick="calculate()">=</button>
-            
             <button class="calc-btn" onclick="appendToDisplay('0')" style="grid-column: span 3;">0</button>
             <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
         </div>
@@ -207,9 +202,7 @@
             <button class="cat-btn" onclick="setCategory('Puzzle')">Puzzle</button>
         </div>
     </div>
-
     <div id="grid"></div>
-
     <div id="player">
         <button id="closeBtn" onclick="closeGame()">EXIT GAME</button>
         <iframe id="frame" allowfullscreen></iframe>
@@ -217,45 +210,26 @@
 </div>
 
 <script>
-// --- CONFIG & DATA ---
-const sampleGames = [
-  {name: "Crossy Road", url: "https://crossy-road.io/", cat: "Action"},
-  {name: "Slope", url: "https://slopegame.io/", cat: "Action"},
-  {name: "Stickman Hook", url: "https://stickmanhook.io/", cat: "Action"},
-  {name: "Subway Surfers", url: "https://subwaysurfersgame.io/", cat: "Action"},
-  {name: "Temple Run 2", url: "https://templerun2.io/", cat: "Action"},
-  {name: "Tunnel Rush", url: "https://tunnelrush.io/", cat: "Action"},
-  {name: "Geometry Dash", url: "https://geometrydash.io/", cat: "Action"},
-  {name: "Drift Hunters", url: "https://drifthunters.io/", cat: "Racing"},
-  {name: "Moto X3M", url: "https://motox3m.io/", cat: "Racing"},
-  {name: "Snow Rider 3D", url: "https://snowrider3d.io/", cat: "Racing"},
-  {name: "Shell Shockers", url: "https://shellshock.io/", cat: "Shooter"},
-  {name: "Krunker", url: "https://krunker.io/", cat: "Shooter"},
-  {name: "1v1.LOL", url: "https://1v1.lol/", cat: "Shooter"},
-  {name: "Zombs Royale", url: "https://zombsroyale.io/", cat: "Shooter"},
-  {name: "Paper.io 2", url: "https://paper-io.com/", cat: "Shooter"},
-  {name: "2048", url: "https://play2048.co/", cat: "Puzzle"},
-  {name: "Sudoku", url: "https://sudoku.com/", cat: "Puzzle"},
-  {name: "Chess.com", url: "https://www.chess.com/play/online", cat: "Puzzle"},
-  {name: "Basketball Stars", url: "https://basketballstars.io/", cat: "Action"},
-  {name: "Retro Bowl", url: "https://retrobowl.me/", cat: "Action"}
-];
-
-let allGames = [];
-// Generate enough games to fill infinite scroll (5x duplication)
-for (let i = 0; i < 5; i++) {
-    sampleGames.forEach(g => {
-        allGames.push({ name: g.name + (i > 0 ? " " + (i+1) : ""), url: g.url, cat: g.cat });
-    });
-}
-
 // --- APP STATE ---
+let allGames = [];
 let currentIndex = 0;
 let currentCategory = "All";
 const display = document.getElementById('display');
 const calcUI = document.getElementById('calc-ui');
 const hub = document.getElementById('hub-container');
 const grid = document.getElementById("grid");
+
+// --- DATA FETCHING ---
+async function fetchGames() {
+    try {
+        const response = await fetch('games.json');
+        const data = await response.json();
+        allGames = data;
+        resetGrid();
+    } catch (error) {
+        console.error("Error loading games.json:", error);
+    }
+}
 
 // --- CALCULATOR & PANIC LOGIC ---
 function toggleMode() { document.body.classList.toggle('code-mode'); }
@@ -271,7 +245,6 @@ function calculate() {
     }
 }
 
-// THE PANIC KEY [ESC]
 window.addEventListener('keydown', (e) => {
     if (e.key === "Escape") {
         closeGame();
@@ -287,7 +260,7 @@ function openHub() {
     calcUI.style.display = "none";
     hub.style.display = "block";
     document.body.style.backgroundColor = "#0b0b0b";
-    resetGrid();
+    fetchGames(); // Trigger the JSON load
 }
 
 function loadMoreGames() {
@@ -327,7 +300,6 @@ function closeGame() {
     document.getElementById("frame").src = "";
 }
 
-// INFINITE SCROLL
 window.addEventListener("scroll", () => {
     if (hub.style.display === "block") {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
