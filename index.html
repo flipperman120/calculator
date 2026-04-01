@@ -5,21 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pro Calc & Ultimate Hub</title>
     <style>
-        /* --- CALCULATOR & THEME STYLES --- */
+        /* --- TI-30XIIS STEALTH STYLE --- */
         :root {
             --bg-color: #f4f4f9;
-            --calc-bg: #333;
-            --text-color: #333;
-            --btn-bg: #555;
-            --accent: #f39c12;
+            --calc-body: #1e2124; /* Dark plastic */
+            --screen-bg: #c5d1c5; /* LCD green-grey */
+            --btn-blue: #5d7fa3;  /* 2nd and Enter keys */
+            --btn-black: #2a2a2a; /* Numbers */
+            --btn-nav: #444;      /* Arrow keys */
+            --btn-op: #3d4e5f;    /* Operators */
         }
-        body.code-mode {
-            --bg-color: #0a0a0a;
-            --calc-bg: #1a1a1a;
-            --text-color: #00ff41;
-            --btn-bg: #222;
-            --accent: #008f11;
-        }
+
         body {
             margin: 0;
             background-color: var(--bg-color);
@@ -27,6 +23,7 @@
             transition: background 0.3s;
             overflow-x: hidden;
         }
+
         #calc-ui {
             display: flex;
             flex-direction: column;
@@ -34,41 +31,72 @@
             align-items: center;
             height: 100vh;
         }
+
+        /* Tapered Body Shape */
         .calculator {
-            background-color: var(--calc-bg);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
-            width: 320px;
+            background-color: var(--calc-body);
+            padding: 25px 20px 45px 20px;
+            border-radius: 20px 20px 60px 60px; 
+            box-shadow: 0px 12px 0px #000;
+            width: 340px;
+            border: 2px solid #333;
         }
+
+        .brand {
+            color: #ccc;
+            font-size: 11px;
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
         #display {
             width: 100%;
-            height: 60px;
-            font-size: 1.5rem;
-            text-align: right;
-            margin-bottom: 15px;
+            height: 85px;
+            background-color: var(--screen-bg);
+            color: #222;
+            border: 4px inset #888;
+            border-radius: 5px;
+            margin-bottom: 20px;
             padding: 10px;
             box-sizing: border-box;
-            border-radius: 5px;
-            background: #222;
-            color: var(--text-color);
-            border: 1px solid #444;
+            text-align: right;
+            font-size: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3);
         }
+
         .buttons {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
         }
+
         button.calc-btn {
-            padding: 15px;
-            font-size: 1rem;
+            padding: 12px 2px;
+            font-size: 0.75rem;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            background-color: var(--btn-bg);
             color: white;
+            background-color: var(--btn-black);
+            box-shadow: 0px 3px 0px #000;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.1s;
         }
-        .operator { background-color: var(--accent); }
+
+        button.calc-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0px 1px 0px #000;
+        }
+
+        /* Specific Key Styling */
+        .blue-btn { background-color: var(--btn-blue) !important; }
+        .nav-btn { background-color: var(--btn-nav) !important; border-radius: 50% !important; font-size: 1rem !important; }
+        .op-btn { background-color: var(--btn-op) !important; }
+        .clr-btn { background-color: #c0392b !important; }
 
         /* --- GAME HUB STYLES --- */
         #hub-container {
@@ -105,11 +133,9 @@
             border-radius: 6px;
             cursor: pointer;
             background: #00ffcc;
+            color: #000;
             font-weight: bold;
-            transition: 0.2s;
         }
-        .cat-btn:hover { background: #00ccaa; }
-        
         #grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -122,17 +148,10 @@
             border-radius: 12px;
             cursor: pointer;
             text-align: center;
-            transition: 0.2s;
             border: 1px solid #333;
             font-weight: bold;
         }
-        .game:hover { 
-            background: #222; 
-            transform: translateY(-5px);
-            border-color: #00ffcc;
-        }
-        
-        /* --- PLAYER & PANIC --- */
+        .game:hover { border-color: #00ffcc; transform: translateY(-3px); }
         #player {
             display: none;
             position: fixed;
@@ -153,41 +172,52 @@
             font-weight: bold;
             border-radius: 5px;
         }
-        .panic-info {
-            font-size: 11px;
-            color: #888;
-            margin-top: 15px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
 
 <div id="calc-ui">
-    <button onclick="toggleMode()" style="margin-bottom: 15px; cursor: pointer; color: var(--text-color); background: none; border: 1px solid var(--accent); padding: 8px 20px; border-radius: 20px; font-weight: bold;">TOGGLE STYLE</button>
     <div class="calculator">
+        <div class="brand">TEXAS INSTRUMENTS TI-30XIIS</div>
         <input type="text" id="display" placeholder="0" readonly>
+        
         <div class="buttons">
-            <button class="calc-btn" onclick="clearDisplay()" style="grid-column: span 2; background: #c0392b;">CLEAR</button>
-            <button class="calc-btn operator" onclick="appendToDisplay('/')">/</button>
-            <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
+            <button class="calc-btn blue-btn" onclick="toggleSecret()">2nd</button>
+            <button class="calc-btn nav-btn">◀</button>
+            <button class="calc-btn nav-btn">▲</button>
+            <button class="calc-btn nav-btn">▼</button>
+            <button class="calc-btn nav-btn">▶</button>
+
+            <button class="calc-btn op-btn">log</button>
+            <button class="calc-btn op-btn">sin</button>
+            <button class="calc-btn op-btn">cos</button>
+            <button class="calc-btn op-btn">tan</button>
+            <button class="calc-btn clr-btn" onclick="clearDisplay()">CLR</button>
+
             <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
             <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
             <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
-            <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay('/')">÷</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay('*')">×</button>
+
             <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
             <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
             <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
-            <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay('-')">−</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay('+')">+</button>
+
             <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
             <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
             <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
-            <button class="calc-btn operator" onclick="calculate()">=</button>
-            <button class="calc-btn" onclick="appendToDisplay('0')" style="grid-column: span 3;">0</button>
+            <button class="calc-btn blue-btn" onclick="calculate()" style="grid-row: span 2; height: 100%;">ENTER</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay('(')">(</button>
+
+            <button class="calc-btn" onclick="appendToDisplay('0')">0</button>
             <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay('**')">^</button>
+            <button class="calc-btn op-btn" onclick="appendToDisplay(')')">)</button>
         </div>
     </div>
-    <div class="panic-info">SECRET BYPASS ACTIVE | PANIC KEY: [ESC]</div>
 </div>
 
 <div id="hub-container">
@@ -210,7 +240,6 @@
 </div>
 
 <script>
-// --- APP STATE ---
 let allGames = [];
 let currentIndex = 0;
 let currentCategory = "All";
@@ -231,8 +260,7 @@ async function fetchGames() {
     }
 }
 
-// --- CALCULATOR & PANIC LOGIC ---
-function toggleMode() { document.body.classList.toggle('code-mode'); }
+// --- CALCULATOR LOGIC ---
 function appendToDisplay(v) { display.value += v; }
 function clearDisplay() { display.value = ""; }
 
@@ -240,11 +268,15 @@ function calculate() {
     if (display.value === "1234") {
         openHub();
     } else {
-        try { display.value = eval(display.value); } 
-        catch(e) { display.value = "Error"; }
+        try { 
+            // Standardizing the input for JS eval
+            let result = eval(display.value.replace('÷', '/').replace('×', '*'));
+            display.value = result;
+        } catch(e) { display.value = "Error"; }
     }
 }
 
+// PANIC KEY [ESC]
 window.addEventListener('keydown', (e) => {
     if (e.key === "Escape") {
         closeGame();
@@ -260,7 +292,7 @@ function openHub() {
     calcUI.style.display = "none";
     hub.style.display = "block";
     document.body.style.backgroundColor = "#0b0b0b";
-    fetchGames(); // Trigger the JSON load
+    fetchGames();
 }
 
 function loadMoreGames() {
