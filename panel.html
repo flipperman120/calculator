@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Panel</title>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
+        button { padding: 20px; font-size: 20px; cursor: pointer; margin: 10px; border-radius: 10px; border: none; }
+        .lock { background: #ff4444; color: white; }
+        .unlock { background: #44ff44; color: black; }
+    </style>
+</head>
+<body>
+    <h1>Site Control Panel</h1>
+    <button class="lock" onclick="setLock(true)">LOCK SITE (Calculator Only)</button>
+    <button class="unlock" onclick="setLock(false)">UNLOCK SITE (Enable Secret)</button>
+
+    <script>
+        function setLock(status) {
+            localStorage.setItem('calculatorLocked', status);
+            alert("Site is now " + (status ? "LOCKED" : "UNLOCKED"));
+        }
+    </script>
+</body>
+</html>
