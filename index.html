@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hacker Calc + Secret</title>
+    <title>Pro Calc & Hub</title>
     <style>
+        /* BASE CALCULATOR STYLES */
         :root {
             --bg-color: #f4f4f9;
             --calc-bg: #333;
@@ -28,16 +29,17 @@
             align-items: center;
             height: 100vh;
             background-color: var(--bg-color);
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             margin: 0;
             overflow: hidden;
+            transition: background 0.3s;
         }
 
-        /* Calculator Styles */
-        .calculator-container {
+        #calc-ui {
             display: flex;
             flex-direction: column;
             align-items: center;
+            z-index: 5;
         }
 
         .calculator {
@@ -46,21 +48,20 @@
             border-radius: 10px;
             box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
             width: 320px;
-            border: 1px solid #444;
         }
 
         #display {
             width: 100%;
             height: 60px;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             text-align: right;
             margin-bottom: 15px;
             padding: 10px;
             box-sizing: border-box;
-            border: 1px solid #444;
             border-radius: 5px;
             background: #222;
             color: var(--text-color);
+            border: 1px solid #444;
         }
 
         .buttons {
@@ -69,7 +70,7 @@
             gap: 8px;
         }
 
-        button {
+        button.calc-btn {
             padding: 15px;
             font-size: 1rem;
             border: none;
@@ -80,14 +81,42 @@
         }
 
         .operator { background-color: var(--accent); }
-        
-        /* Secret Game Styles */
+
+        /* SECRET HUB STYLES */
+        #hub-container {
+            display: none; 
+            position: fixed;
+            inset: 0;
+            background-color: black;
+            z-index: 100;
+        }
+
+        #topbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #111;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            z-index: 10001;
+        }
+
+        .hub-btn {
+            background: #00ffcc;
+            border: none;
+            padding: 8px 12px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
         #loader {
             position: fixed;
             inset: 0;
             background: black;
-            display: none; /* Hidden by default */
-            flex-direction: column;
+            display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
@@ -104,65 +133,82 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        #game-frame {
+        #game {
             display: none;
             width: 100vw;
-            height: 100vh;
+            height: calc(100vh - 90px);
             border: none;
+            margin-top: 90px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
+
+        #game.show { opacity: 1; }
     </style>
 </head>
 <body>
 
-<div id="main-ui" class="calculator-container">
-    <button class="mode-toggle" onclick="toggleMode()" style="margin-bottom: 10px; cursor: pointer; border: 1px solid var(--accent); background: none; color: var(--text-color); padding: 5px 10px;">SWITCH MODE</button>
-    
+<div id="calc-ui">
+    <button onclick="toggleMode()" style="margin-bottom: 10px; cursor: pointer; color: var(--text-color); background: none; border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-weight: bold;">
+        CHANGE STYLE
+    </button>
+
     <div class="calculator">
         <input type="text" id="display" placeholder="0" readonly>
         <div class="buttons">
-            <button onclick="clearDisplay()" style="grid-column: span 2; background: #c0392b;">C</button>
-            <button class="operator" onclick="appendToDisplay('/')">/</button>
-            <button class="operator" onclick="appendToDisplay('*')">*</button>
+            <button class="calc-btn" onclick="clearDisplay()" style="grid-column: span 2; background: #c0392b;">C</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('/')">/</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
             
-            <button onclick="appendToDisplay('7')">7</button>
-            <button onclick="appendToDisplay('8')">8</button>
-            <button onclick="appendToDisplay('9')">9</button>
-            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+            <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+            <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
             
-            <button onclick="appendToDisplay('4')">4</button>
-            <button onclick="appendToDisplay('5')">5</button>
-            <button onclick="appendToDisplay('6')">6</button>
-            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+            <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+            <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
             
-            <button onclick="appendToDisplay('1')">1</button>
-            <button onclick="appendToDisplay('2')">2</button>
-            <button onclick="appendToDisplay('3')">3</button>
-            <button class="operator" onclick="calculate()">=</button>
-            <button onclick="appendToDisplay('0')" style="grid-column: span 3;">0</button>
-            <button onclick="appendToDisplay('.')">.</button>
+            <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+            <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+            <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+            <button class="calc-btn operator" onclick="calculate()">=</button>
+            
+            <button class="calc-btn" onclick="appendToDisplay('0')" style="grid-column: span 3;">0</button>
+            <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
         </div>
     </div>
 </div>
 
-<div id="loader">
-    <div class="spinner"></div>
-    <p style="color: #00ffcc; margin-top: 20px;">LOADING BYPASS...</p>
+<div id="hub-container">
+    <div id="topbar">
+        <h2 style="margin: 0;">🎮 Game Hub</h2>
+        <div id="buttons">
+            <button class="hub-btn" onclick="loadGame('https://crossy-road.io/')">Crossy Road</button>
+            <button class="hub-btn" onclick="loadGame('https://escaperoad.io/')">Escape Road</button>
+            <button class="hub-btn" onclick="location.reload()" style="background: #ff4444;">Exit</button>
+        </div>
+    </div>
+    <div id="loader"><div class="spinner"></div></div>
+    <iframe id="game" src="" allowfullscreen></iframe>
 </div>
-
-<iframe id="game-frame" src="https://crossy-road.io/"></iframe>
 
 <script>
     const display = document.getElementById('display');
-    const mainUI = document.getElementById('main-ui');
-    const loader = document.getElementById('loader');
-    const gameFrame = document.getElementById('game-frame');
+    const calcUI = document.getElementById('calc-ui');
+    const hubContainer = document.getElementById('hub-container');
+    const iframe = document.getElementById("game");
+    const loader = document.getElementById("loader");
 
+    // 1. SIMPLE CHANGING (Style Toggle)
     function toggleMode() {
         document.body.classList.toggle('code-mode');
     }
 
-    function appendToDisplay(input) {
-        display.value += input;
+    // 2. CALCULATOR LOGIC
+    function appendToDisplay(val) {
+        display.value += val;
     }
 
     function clearDisplay() {
@@ -170,33 +216,36 @@
     }
 
     function calculate() {
-        // CHECK FOR SECRET CODE
         if (display.value === "1234") {
-            launchSecret();
-            return;
-        }
-
-        try {
-            display.value = eval(display.value);
-        } catch (error) {
-            display.value = "Error";
+            openHub();
+        } else {
+            try {
+                display.value = eval(display.value);
+            } catch (e) {
+                display.value = "Error";
+            }
         }
     }
 
-    function launchSecret() {
-        // Hide calculator
-        mainUI.style.display = "none";
-        document.body.style.backgroundColor = "black";
-        
-        // Show loader
+    // 3. HUB LOGIC
+    function openHub() {
+        calcUI.style.display = "none";
+        hubContainer.style.display = "block";
+        loadGame('https://crossy-road.io/');
+    }
+
+    function loadGame(url) {
         loader.style.display = "flex";
-
-        // Wait 1 second (per your code) then show game
-        setTimeout(() => {
-            loader.style.display = "none";
-            gameFrame.style.display = "block";
-        }, 1000);
+        iframe.style.display = "none";
+        iframe.classList.remove("show");
+        iframe.src = url;
     }
+
+    iframe.onload = function() {
+        loader.style.display = "none";
+        iframe.style.display = "block";
+        iframe.classList.add("show");
+    };
 </script>
 
 </body>
