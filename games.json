@@ -18,7 +18,7 @@
   { "name": "Sudoku", "url": "https://sudoku.com/", "cat": "Puzzle" },
   { "name": "Chess.com", "url": "https://www.chess.com/play/online", "cat": "Puzzle" },
   { "name": "Basketball Stars", "url": "https://basketballstars.io/", "cat": "Action" },
-  { "name": "Retro Bowl", "url": "https://retrobowl.me/", "cat": "Action" }
-  { "name": "Nick games", "url": "https://www.nick.com/games/all-games", "cat": "Action" }
+  { "name": "Retro Bowl", "url": "https://retrobowl.me/", "cat": "Action" },
+  { "name": "Nick games", "url": "https://www.nick.com/games/all-games", "cat": "Action" },
   { "name": "addictinggames", "url": "https://www.addictinggames.com/", "cat": "Action" }
 ]
