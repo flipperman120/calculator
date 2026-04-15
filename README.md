@@ -23,3 +23,4 @@ A fully functional web-based calculator with a hidden "Stealth Mode" game consol
 * HTML5 / CSS3
 * JavaScript (ES6+)
 * JSON for data storage
+##### panle for lock and unlock cal https://flipperman120.github.io/calculator-Beta/panel
