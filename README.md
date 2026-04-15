@@ -1,7 +1,7 @@
 # calculator
 ## Here is the link for the Released version https://flipperman120.github.io/calculator/
-# Here is the link for the Beta version https://flipperman120.github.io/calculator/
-# Made by https://woooooow9900.cc.cc/
+#### Here is the link for the Beta version https://flipperman120.github.io/calculator/
+#### Made by https://woooooow9900.cc.cc/
 # 🎮 Pro Calc & Game Hub
 
 A fully functional web-based calculator with a hidden "Stealth Mode" game console.
